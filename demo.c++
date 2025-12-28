@@ -1,9 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <string>
-
+#include <iomanip>
 using namespace std;
 
+// Lớp Employee
 class Employee {
 private:
     int id;
@@ -11,123 +12,152 @@ private:
     float salary;
 
 public:
-    Employee(int empId, string empName, float empSalary) 
-        : id(empId), name(empName), salary(empSalary) {}
+    // Hàm tạo có tham số
+    Employee(int id, string name, float salary) {
+        this->id = id;
+        this->name = name;
+        this->salary = salary;
+    }
 
-    Employee() : id(0), name(""), salary(0.0f) {}
+    // Hàm tạo không tham số
+    Employee() {
+        id = 0;
+        name = "";
+        salary = 0;
+    }
 
-    // Nhap ten và luong
+    // Nhập thông tin (mã được truyền từ ngoài)
     void input() {
         cout << "Nhap ten nhan vien: ";
+        cin.ignore();
         getline(cin, name);
-        cout << "Nhap luong nhan vien: ";
+        cout << "Nhap luong: ";
         cin >> salary;
-        cin.ignore(); // Xoa ky tu newline
+        cin.ignore();
     }
 
-    // Hien thi thong tin theo yeu cau
+    // Hiển thị thông tin
     void printInfo() {
-        cout << "ID: " << id << " - Ten: " << name << " - Luong: " << salary << endl;
+        cout << "ID: " << id << " - Ten: " << name << " - Luong: " << fixed << setprecision(0) << salary << endl;
     }
 
+    // Trả về mã nhân viên
     int getId() {
         return id;
     }
 
-    void setSalary(float newSalary) {
-        salary = newSalary;
+    // Set mã nhân viên
+    void setId(int id) {
+        this->id = id;
     }
 
-    void setId(int empId) {
-        id = empId;
+    // Cập nhật lương
+    void setSalary(float salary) {
+        this->salary = salary;
     }
 };
 
+// Lớp EmployeeManager
 class EmployeeManager {
 private:
     vector<Employee> list;
     int nextId;
 
 public:
-    EmployeeManager() : nextId(3001) {}
-
-    void addEmployee() {
-        Employee newEmp;
-        newEmp.setId(nextId);
-        newEmp.input();
-        list.push_back(newEmp);
-        nextId++;
-        cout << "Them nhan vien thanh cong!" << endl;
+    // Khởi tạo nextId = 3001
+    EmployeeManager() {
+        nextId = 3001;
     }
 
+    // Thêm mới nhân viên
+    void addEmployee() {
+        Employee emp;
+        emp.setId(nextId);  // Truyền mã từ ngoài
+        emp.input();        // Nhập tên và lương
+        list.push_back(emp);
+        cout << "Da them nhan vien thanh cong! ID: " << nextId << endl;
+        nextId++;
+    }
+
+    // Hiển thị danh sách nhân viên
     void showAll() {
         if (list.empty()) {
             cout << "Danh sach nhan vien rong!" << endl;
-        } else {
-            cout << "----- DANH SACH NHAN VIEN -----" << endl;
-            for (size_t i = 0; i < list.size(); ++i) {
-                list[i].printInfo();
-            }
-            cout << "-------------------------------" << endl;
+            return;
         }
+        cout << "\n----- DANH SACH NHAN VIEN -----" << endl;
+        for (int i = 0; i < list.size(); i++) {
+            list[i].printInfo();
+        }
+        cout << "-------------------------------\n" << endl;
     }
 
+    // Cập nhật lương nhân viên
     void updateSalaryById() {
-        int searchId;
+        int id;
         cout << "Nhap ma nhan vien can cap nhat: ";
-        cin >> searchId;
-        cin.ignore();
+        cin >> id;
 
         bool found = false;
-        for (size_t i = 0; i < list.size(); ++i) {
-            if (list[i].getId() == searchId) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list[i].getId() == id) {
                 float newSalary;
                 cout << "Nhap luong moi: ";
                 cin >> newSalary;
-                cin.ignore();
                 list[i].setSalary(newSalary);
-                cout << "Cap nhat luong thanh cong!" << endl;
+                cout << "Da cap nhat luong thanh cong!" << endl;
                 found = true;
                 break;
             }
         }
+
         if (!found) {
-            cout << "Khong tim thay nhan vien voi ma: " << searchId << endl;
+            cout << "Khong tim thay nhan vien co ID: " << id << endl;
         }
+        cin.ignore();
     }
 
+    // Xóa nhân viên theo id
     void deleteById() {
-        int searchId;
+        int id;
         cout << "Nhap ma nhan vien can xoa: ";
-        cin >> searchId;
-        cin.ignore();
+        cin >> id;
 
         bool found = false;
-        for (size_t i = 0; i < list.size(); ++i) {
-            if (list[i].getId() == searchId) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list[i].getId() == id) {
                 list.erase(list.begin() + i);
-                cout << "Xoa nhan vien thanh cong!" << endl;
+                cout << "Da xoa nhan vien thanh cong!" << endl;
                 found = true;
                 break;
             }
         }
+
         if (!found) {
-            cout << "Khong tim thay nhan vien voi ma: " << searchId << endl;
+            cout << "Khong tim thay nhan vien co ID: " << id << endl;
         }
+        cin.ignore();
     }
 
+    // Hiển thị menu chức năng
     void menu() {
         int choice;
         do {
-            cout << "\n=====MENU=====" << endl;
+            cout << "\n----- MENU -----" << endl;
             cout << "1. Them nhan vien" << endl;
             cout << "2. Hien thi danh sach" << endl;
             cout << "3. Cap nhat luong" << endl;
             cout << "4. Xoa nhan vien" << endl;
             cout << "5. Thoat" << endl;
-            cout << "Nhap lua chon: ";
-            cin >> choice;
-            cin.ignore();
+            cout << "----------------" << endl;
+            cout << "Lua chon cua ban: ";
+            
+            if (!(cin >> choice)) {
+                cin.clear();
+                cin.ignore(10000, '\n');
+                cout << "Lua chon khong hop le! Vui long chon lai." << endl;
+                continue;
+            }
 
             switch (choice) {
                 case 1:
@@ -143,18 +173,20 @@ public:
                     deleteById();
                     break;
                 case 5:
-                    cout << "Thoat chuong trinh." << endl;
+                    cout << "Cam on ban da su dung!" << endl;
                     break;
                 default:
-                    cout << "Lua chon khong hop le. Vui long thu lai!" << endl;
+                    cout << "Lua chon khong hop le! Vui long chon lai." << endl;
                     break;
             }
         } while (choice != 5);
     }
 };
 
+// Hàm main
 int main() {
     EmployeeManager manager;
     manager.menu();
     return 0;
 }
+
